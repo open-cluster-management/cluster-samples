@@ -31,7 +31,7 @@ type: Opaque
 apiVersion: v1
 kind: Secret
 metadata:
-  name: CLUSTER_NAME-install-config
+  name: install-config
   namespace: CLUSTER_NAME
 type: Opaque
 stringData:
