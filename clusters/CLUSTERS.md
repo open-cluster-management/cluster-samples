@@ -14,7 +14,7 @@ A template is provided for creating the cluster resources.
 ```bash
 oc new-project CLUSTER_NAME
 ```
-2. Apply the two secrets `aws-cred` and `install-config`, see [SECRETS.md](../SECRETS.md)
+2. Apply the two secrets `aws-cred` and `install-config`, see [SECRETS.md](../secrets/SECRETS.md)
 3. Determine the available images
 ```bash
 oc get ClusterImageSets
