@@ -1,0 +1,73 @@
+---
+apiVersion: v1
+kind: Template
+metadata:
+  name: ${CLUSTER_NAME}-cluster
+  namespace: ${CLUSTER_NAME}
+objects:
+- apiVersion: hive.openshift.io/v1
+  kind: ClusterDeployment
+  metadata:
+    name: ${CLUSTER_NAME}
+    namespace: ${CLUSTER_NAME}
+  spec:
+    baseDomain: ${CLUSTER_BASEDOMAIN}
+    clusterName: ${CLUSTER_NAME}
+    installAttemptsLimit: 1
+    controlPlaneConfig:
+      servingCertificates: {}
+    installed: false
+    platform:
+      aws:
+        credentialsSecretRef:
+          name: aws-cred
+        region: us-east-1
+    provisioning:
+      installConfigSecretRef:
+        name: install-config
+      sshPrivateKeySecretRef:
+        name: aws-cred
+      imageSetRef:
+        # Find releases at quay.io/openshift-release-dev/ocp-release
+        name: ${CLUSTER_RELEASE_IMAGE}
+    pullSecretRef:
+      name: aws-cred
+- apiVersion: hive.openshift.io/v1
+  kind: MachinePool
+  metadata:
+    name: ${CLUSTER_NAME}-worker
+    namespace: ${CLUSTER_NAME}
+  spec:
+    clusterDeploymentRef:
+      name: ${CLUSTER_NAME}
+    name: worker
+    platform:
+      aws:
+        rootVolume:
+          iops: 100
+          size: 100
+          type: gp2
+        type: m5.xlarge
+    replicas: 3
+- apiVersion: cluster.open-cluster-management.io/v1
+  kind: ManagedCluster
+  metadata:
+    labels:
+      cloud: Amazon
+      region: us-east-1
+      name: ${CLUSTER_NAME}
+      vendor: OpenShift
+    name: ${CLUSTER_NAME}
+    namespace: ${CLUSTER_NAME}
+  spec:
+    hubAcceptsClient: true
+parameters:
+- description: The name used for this configMap cluster template
+  name: CLUSTER_NAME
+  required: true
+- description: The basedomain registered with your cloud provider
+  name: CLUSTER_BASEDOMAIN
+  required: true
+- description: The OpenShift release image to be deployed
+  name: CLUSTER_RELEASE_IMAGE
+  required: true
