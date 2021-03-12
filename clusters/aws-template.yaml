@@ -20,18 +20,18 @@ objects:
     platform:
       aws:
         credentialsSecretRef:
-          name: aws-cred
+          name: ${CLUSTER_NAME}-secrets
         region: us-east-1
     provisioning:
       installConfigSecretRef:
         name: install-config
       sshPrivateKeySecretRef:
-        name: aws-cred
+        name: ${CLUSTER_NAME}-secrets
       imageSetRef:
         # Find releases at quay.io/openshift-release-dev/ocp-release
         name: ${CLUSTER_RELEASE_IMAGE}
     pullSecretRef:
-      name: aws-cred
+      name: ${CLUSTER_NAME}-secrets
 - apiVersion: hive.openshift.io/v1
   kind: MachinePool
   metadata:
